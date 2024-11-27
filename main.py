@@ -253,43 +253,6 @@ class sequence(object):
             output_file_path = f'output/{cnt}_{card_prefix}.mp3'
             combined_audio.export(output_file_path, format='mp3')
 
-
-def peppa_deck():
-    
-    target_notes = "JlabNote-JlabConverted-1"
-    tmp = NoteInfo(root = "/Users/andersmb15/Documents/GitHub/anki-to-mp3/demo-deck-python.apkg")
-    card_prefix = "jp-basic"
-
-    notes = tmp.get_notes_for_note_name(target_notes)
-    seq = sequence(notes)
-    
-    # Vocab Japaense 
-    seq.add_step(field_inx = 3,repetition_cnt = 3, step_type = StepType(type = StepType.MP3_TYPE, lang = "ja",))
-
-    # Sentence English 
-    backup_step = Step(field_inx = 11 , repetition_cnt = 1, step_type = StepType(type = StepType.TTTS, lang = "en"))
-    seq.add_step(field_inx = 17,repetition_cnt = 1, step_type = StepType(type = StepType.TTS, lang = "en",), backup_step = backup_step)
-
-    seq.genrate_cards(card_prefix)
-
-def shirokuma_deck():
-    target_notes = "Japanese Morphman Audio Ankiweb+++++"
-    tmp = NoteInfo(root = "/Users/andersmb15/Documents/GitHub/anki-to-mp3/demo-deck-python.apkg")
-    notes = tmp.get_notes_for_note_name(target_notes)
-    seq = sequence(notes)
-    
-    # Sentence Japaense 
-    seq.add_step(field_inx = 5,repetition_cnt = 2, step_type = StepType(type = StepType.MP3_TYPE, lang = "ja",))
-
-    # Sentence English 
-    seq.add_step(field_inx = 1,repetition_cnt = 1, step_type = StepType(type = StepType.TTS, lang = "en",))
-
-    seq.genrate_cards(card_prefix = "shirokuma")
-
-if __name__ == '__main__':
-    peppa_deck()
-    shirokuma_deck()
-
     
 
     
