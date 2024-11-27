@@ -1,6 +1,5 @@
 sound_files_in_order = []
 
-root = "jp-basic"
 from pydub import AudioSegment
 from gtts import gTTS
 import os
@@ -10,6 +9,12 @@ import sqlite3
 from deep_translator import GoogleTranslator
 
 extracted_files = "extracted_files"
+
+def create_folder_if_missing(folder_path):
+    # Check if the folder exists and create it if it doesn't
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        print(f"Folder created at: {folder_path}")
 
 def extract_akpg(file_path):
     # Rename .akpg to .zip
@@ -27,6 +32,7 @@ def translate_text(text, target_language='en'):
 
 def create_text_to_speach(text,lang ):
     tts = gTTS(text=text, lang=lang)
+    create_folder_if_missing("tmp")
     file_path = 'tmp/' +text + ""
     tts.save(file_path)
     return file_path
@@ -239,8 +245,7 @@ class sequence(object):
         self.steps.append(Step(field_inx,repetition_cnt, step_type, backup_step = backup_step))
 
     def genrate_cards(self, card_prefix):
-        
-        
+        create_folder_if_missing("output")
         for cnt, note in enumerate(self.notes):
             combined_audio = AudioSegment.empty()
             for step_cnt, step in enumerate(self.steps):
@@ -249,48 +254,27 @@ class sequence(object):
             combined_audio.export(output_file_path, format='mp3')
 
 
-def jp_basic_deck():
+def peppa_deck():
+    
     target_notes = "JlabNote-JlabConverted-1"
-    tmp = NoteInfo()
+    tmp = NoteInfo(root = "/Users/andersmb15/Documents/GitHub/anki-to-mp3/demo-deck-python.apkg")
+    card_prefix = "jp-basic"
+
     notes = tmp.get_notes_for_note_name(target_notes)
     seq = sequence(notes)
     
-    # Sentence Japaense 
+    # Vocab Japaense 
     seq.add_step(field_inx = 3,repetition_cnt = 3, step_type = StepType(type = StepType.MP3_TYPE, lang = "ja",))
 
     # Sentence English 
     backup_step = Step(field_inx = 11 , repetition_cnt = 1, step_type = StepType(type = StepType.TTTS, lang = "en"))
     seq.add_step(field_inx = 17,repetition_cnt = 1, step_type = StepType(type = StepType.TTS, lang = "en",), backup_step = backup_step)
 
-    seq.genrate_cards(card_prefix = "jp_basic")
-
-
-def peppa_deck():
-    
-    target_notes = "PeppaPig"
-    tmp = NoteInfo()
-    notes = tmp.get_notes_for_note_name(target_notes)
-    seq = sequence(notes)
-    
-    # Vocab Japaense 
-    seq.add_step(field_inx = 2,repetition_cnt = 1, step_type = StepType(type = StepType.TTS, lang = "ja",))
-
-    # Vocab English 
-    seq.add_step(field_inx = 3,repetition_cnt = 1, step_type = StepType(type = StepType.TTTS, lang = "en",))
-
-    # Japanese Setence 
-    seq.add_step(field_inx = 0,repetition_cnt = 3, step_type = StepType(type = StepType.TTS, lang = "ja",))
-    
-    # English Sentence
-    backup_step = Step(field_inx = 0 , repetition_cnt = 1, step_type = StepType(type = StepType.TTTS, lang = "en"))
-    seq.add_step(field_inx = 1,repetition_cnt = 1, step_type = StepType(type = StepType.TTS, lang = "en",), backup_step = backup_step)
-    
-    seq.genrate_cards(card_prefix = "podcast2")
-
+    seq.genrate_cards(card_prefix)
 
 def shirokuma_deck():
     target_notes = "Japanese Morphman Audio Ankiweb+++++"
-    tmp = NoteInfo()
+    tmp = NoteInfo(root = "/Users/andersmb15/Documents/GitHub/anki-to-mp3/demo-deck-python.apkg")
     notes = tmp.get_notes_for_note_name(target_notes)
     seq = sequence(notes)
     
@@ -302,32 +286,9 @@ def shirokuma_deck():
 
     seq.genrate_cards(card_prefix = "shirokuma")
 
-def ebba_engelska_swe():
-    target_notes = "PeppaPig"
-    tmp = NoteInfo(root = "/Users/andersmb15/Desktop/JapaneseListeningApp_POC/jp-basic/Ebba-Engelska.apkg")
-    notes = tmp.get_notes_for_note_name(target_notes)
-    seq = sequence(notes)
-    
-    # Sentence English 
-    seq.add_step(field_inx = 0,repetition_cnt = 1, step_type = StepType(type = StepType.TTS, lang = "sv",))
-
-    seq.genrate_cards(card_prefix = "ebba_engelska_sv")
-
-def ebba_engelska_eng():
-    target_notes = "PeppaPig"
-    tmp = NoteInfo(root = "/Users/andersmb15/Desktop/JapaneseListeningApp_POC/jp-basic/Ebba-Engelska.apkg")
-    notes = tmp.get_notes_for_note_name(target_notes)
-    seq = sequence(notes)
-    
-    # Sentence English 
-    seq.add_step(field_inx = 1,repetition_cnt = 1, step_type = StepType(type = StepType.TTS, lang = "en",))
-
-    seq.genrate_cards(card_prefix = "ebba_engelska_eng")
-
 if __name__ == '__main__':
-    jp_basic_deck()
-    #ebba_engelska_eng()
-    #ebba_engelska_swe()
+    peppa_deck()
+    shirokuma_deck()
 
     
 
