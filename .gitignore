@@ -2,7 +2,3 @@
 *.pyc
 config.py
 /extracted_files
-/output
-/tmp
-.DS_Store
-extracted_files/.DS_Store
